@@ -142,6 +142,49 @@ export interface BillingMutationResponse {
   retry_after?: number | null
 }
 
+export interface SubscriptionTierOption {
+  tier_id: string
+  name: string
+  tier_order: number
+  dollars_per_month_display: string
+  monthly_credits: string
+  is_current: boolean
+  is_enabled: boolean        // false = grandfathered current tier
+}
+
+export interface SubscriptionStateResponse {
+  ok: boolean
+  logged_in: boolean
+  is_admin: boolean
+  can_change_plan: boolean        // role gate (ADMIN/OWNER), from NAS
+  org_name: string | null
+  role: string | null
+  current: {
+    tier_id: string | null        // null = free (no active sub)
+    tier_name: string | null
+    monthly_credits: string | null
+    credits_remaining: string | null
+    cycle_ends_at: string | null  // ISO
+    pending_downgrade_tier_name: string | null
+    pending_downgrade_at: string | null
+    is_past_due: boolean          // dunning: active=false but period live (WS1 M1 footgun)
+  } | null
+  tiers: SubscriptionTierOption[]
+  portal_url: string | null
+  error?: string | null
+}
+
+export interface SubscriptionManageLinkResponse {
+  ok: boolean
+  kind?: 'checkout' | 'portal'
+  url?: string
+  error?: string
+  message?: string
+  portal_url?: string | null
+  retry_after?: number | null
+  payload?: BillingErrorPayload
+}
+
 export type CommandDispatchResponse =
   | { output?: string; type: 'exec' | 'plugin' }
   | { target: string; type: 'alias' }
