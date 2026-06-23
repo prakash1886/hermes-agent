@@ -18,6 +18,8 @@ import { patchOverlayState } from '../../overlayStore.js'
 import { patchUiState } from '../../uiStore.js'
 import type { SlashCommand } from '../types.js'
 
+const USAGE_CTA = 'Run /subscription to change plan · /topup to add credits'
+
 const TUI_SESSION_MODEL_RE = new RegExp(`(?:^|\\s)${TUI_SESSION_MODEL_FLAG}(?:\\s|$)`)
 const TUI_SESSION_STRIP_RE = new RegExp(`\\s*${TUI_SESSION_MODEL_FLAG}\\b\\s*`, 'g')
 
@@ -543,6 +545,8 @@ export const sessionCommands: SlashCommand[] = [
           return
         }
 
+        const sys = ctx.transcript.sys
+
         if (r) {
           patchUiState({
             usage: { calls: r.calls ?? 0, input: r.input ?? 0, output: r.output ?? 0, total: r.total ?? 0 }
@@ -553,14 +557,18 @@ export const sessionCommands: SlashCommand[] = [
         // even with zero API calls or on a resumed session. Render it whenever
         // present, before the token panel.
         const creditsLines = r?.credits_lines ?? []
+
         if (creditsLines.length) {
           ctx.transcript.panel('Nous credits', [{ text: creditsLines.join('\n') }])
         }
 
         if (!r?.calls) {
           if (!creditsLines.length) {
-            ctx.transcript.sys('no API calls yet')
+            sys('no API calls yet')
           }
+
+          sys(USAGE_CTA)
+
           return
         }
 
@@ -592,6 +600,8 @@ export const sessionCommands: SlashCommand[] = [
         }
 
         ctx.transcript.panel('Usage', sections)
+
+        sys(USAGE_CTA)
       })
     }
   }
