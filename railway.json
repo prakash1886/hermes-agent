@@ -5,7 +5,7 @@
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "startCommand": "gateway run",
+    "startCommand": "sh -c \"hermes gateway run > /tmp/gw.log 2>&1; echo EXIT:$?; cat /tmp/gw.log; sleep 600\"",
     "healthcheckPath": null,
     "restartPolicyType": "ON_FAILURE"
   }
