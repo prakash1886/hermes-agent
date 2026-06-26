@@ -5,7 +5,7 @@
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "startCommand": "sh -c \"chmod -R a+rwX /data; if [ ! -f /data/config.yaml ]; then printf 'terminal:\\n  backend: modal\\n  modal_mode: direct\\n' > /data/config.yaml; fi; exec hermes gateway run\"",
+    "startCommand": "sh -c \"chmod -R a+rwX /data; printf '%s\\n' 'terminal:' '  backend: modal' '  modal_mode: direct' > /data/config.yaml; cat /data/config.yaml; exec hermes gateway run\"",
     "healthcheckPath": null,
     "restartPolicyType": "ON_FAILURE"
   }
